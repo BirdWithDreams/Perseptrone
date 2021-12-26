@@ -9,7 +9,9 @@ from fullconnectedlayer import FullConnectedLayer
 
 class Perceptron:
     actFunctions = af
+
     # this is main class
+    # The class for perseptrone
 
     def __init__(self, learning_speed: float = 1, quantity: int = 1, error_func=None, name: str = None):
         self.layers = []
