@@ -1,0 +1,21 @@
+{
+    "name": "test",
+    "weights file name": "test weights.npz",
+    "layers": [
+        {
+            "size": 9,
+            "file name": "weights_0_1",
+            "activation function": "ReLU"
+        },
+        {
+            "size": 6,
+            "file name": "weights_1_2",
+            "activation function": "ReLU"
+        },
+        {
+            "size": 2,
+            "file name": "weights_2_3",
+            "activation function": "ReLU"
+        }
+    ]
+}
