@@ -23,8 +23,7 @@ class FullConnectedLayer:
 
     def activation(self, _input: np.array):
         self._input = np.array(_input)
-        _n = self._input * self._weights
-        _n = _n.sum(axis=1)
+        _n = self._weights @ self._input
 
         self._neurons[:-1], self._derivative = self._function(_n)
         if self._next is not None:
