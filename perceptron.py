@@ -10,9 +10,6 @@ from fullconnectedlayer import FullConnectedLayer
 class Perceptron:
     actFunctions = af
 
-    # this is main class
-    # The class for perseptrone
-
     def __init__(self, learning_speed: float = 1, quantity: int = 1, error_func=None, name: str = None):
         self.layers = []
         self.average_error = [0, 0]
@@ -21,6 +18,12 @@ class Perceptron:
         self._quantity = quantity
         self._name = name
         self._error_func = error_func
+
+    def __repr__(self):
+        return f"Perceptron '{self.name}' with layers: \n\t" + "\n\t".join(repr(layer) for layer in self.layers)
+
+    def __call__(self):
+        pass
 
     def addLayer(self, size: tuple, activation_function):
         layer = FullConnectedLayer(self, size, activation_function)
@@ -158,5 +161,19 @@ class ErrorFunctions:
         return math.sqrt(sum(delta ** 2) / delta.size)
 
     @staticmethod
-    def Arctan(delta):
+    def arctan(delta):
         return sum(np.arctan(delta) ** 2) / delta.size
+
+
+def copy(other):
+    _args = (other.a, other.quantity, other._error_func, other.name)
+    obj = other.__class__(*_args)
+
+    for layer in other.layers:
+        obj.addLayer(layer.size, layer._function)
+        obj.layers[-1]._weights = layer.weights
+
+    obj.set_data(other.data, other.answers)
+    obj.layers[-1].set_next(None)
+
+    return obj
