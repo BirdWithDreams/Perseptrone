@@ -1,10 +1,10 @@
 import json
-import math
 
 import numpy as np
 
 import activationfunctions as af
 from fullconnectedlayer import FullConnectedLayer
+from errorfunctions import ErrorFunctions
 
 
 class Perceptron:
@@ -149,20 +149,6 @@ class Perceptron:
     @quantity.setter
     def quantity(self, value):
         self._quantity = value
-
-
-class ErrorFunctions:
-    @staticmethod
-    def MSE(delta):
-        return sum(delta ** 2) / delta.size
-
-    @staticmethod
-    def RootMSE(delta):
-        return math.sqrt(sum(delta ** 2) / delta.size)
-
-    @staticmethod
-    def arctan(delta):
-        return sum(np.arctan(delta) ** 2) / delta.size
 
 
 def copy(other):
