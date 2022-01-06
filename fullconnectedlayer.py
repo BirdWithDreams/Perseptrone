@@ -12,6 +12,13 @@ class FullConnectedLayer:
 
         self._perceptron = perceptron
 
+    def __repr__(self):
+        return f"Full Connected Layer: {self._size=}, {self._function=} with weights:\n\t" + str(self.weights)
+
+    def __str__(self):
+        return f"Full Connected Layer: size - {self._size}, " \
+               f"function - {self._function.__name__}"
+
     def set_weights(self, size):
         self._weights = np.random.uniform(-1, 1, size)
 
@@ -59,4 +66,4 @@ class FullConnectedLayer:
 
     @weights.setter
     def weights(self, value):
-        self._weights = value
+        self._weights = np.copy(value)

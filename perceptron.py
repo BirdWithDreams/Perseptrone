@@ -22,8 +22,8 @@ class Perceptron:
     def __repr__(self):
         return f"Perceptron '{self.name}' with layers: \n\t" + "\n\t".join(repr(layer) for layer in self.layers)
 
-    def __call__(self):
-        pass
+    def __str__(self):
+        return f"Perceptron '{self.name}' with layers: \n\t" + "\n\t".join(str(layer) for layer in self.layers)
 
     def addLayer(self, size: tuple, activation_function):
         layer = FullConnectedLayer(self, size, activation_function)
