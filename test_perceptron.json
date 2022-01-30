@@ -1,5 +1,6 @@
 {
     "name": "test",
+    "error_function": "arctan",
     "weights file name": "test weights.npz",
     "layers": [
         {
