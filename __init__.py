@@ -1,2 +1,1 @@
-from perceptron import Perceptron
-from errorfunctions import ErrorFunctions
+from perceptron import Perceptron, ErrorFunctions

@@ -6,7 +6,6 @@ import activationfunctions as af
 from fullconnectedlayer import FullConnectedLayer
 from errorfunctions import ErrorFunctions
 
-
 class Perceptron:
     actFunctions = af
 
@@ -67,6 +66,7 @@ class Perceptron:
         try:
             error = self._error_func(delta)
             self.calculate_average_error(error)
+            print(error)
         except Exception as e:
             print(e)
 
@@ -78,10 +78,11 @@ class Perceptron:
         for iter, _data in enumerate(self.data):
             output = self.layers[0].activation(_data)[:-1]
             res = f"Input: {_data}\nOutput: {output}\n"
-            print(res)
+            # print(res)
 
-            delta = output[:-1] - self.answers[iter]
+            delta = output - self.answers[iter]
             error = self._error_func(delta)
+            print(error)
             self.calculate_average_error(error)
 
         print(f"Error: {self.average_error[0]}")
@@ -91,6 +92,7 @@ class Perceptron:
             names = [f'weights_{i}_{i + 1}' for i in range(len(self.layers))]
             perc = {
                 'name': self.name,
+                'error_function': self._error_func.__name__,
                 'weights file name': self.name + ' weights.npz',
                 'layers': [{"size": layer.size,
                             "file name": name,
@@ -113,6 +115,7 @@ class Perceptron:
             perc = json.load(file)
 
         perceptron = cls(name=perc["name"])
+        perceptron._error_func = ErrorFunctions.__dict__[perc['error_function']]
         file = np.load(perc['weights file name'])
         for layer in perc["layers"]:
             perceptron.addLayer(layer["size"], cls.actFunctions.__dict__[layer["activation function"]])
