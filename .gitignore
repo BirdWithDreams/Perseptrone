@@ -112,6 +112,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-test weights.npz
 main.py
+.idea/.name
+test weights.npz
+test.py
 test_perceptron.json
+tests.py
