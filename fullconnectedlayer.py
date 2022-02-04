@@ -23,14 +23,14 @@ class FullConnectedLayer:
         self._weights = np.random.uniform(-1, 1, size)
 
         if self._next is not None:
-            self._next.set_weights((self._next.size, self.size + 1))
+            self._next.set_weights((self.size + 1, self._next.size))
 
     def set_next(self, layer):
         self._next = layer
 
     def activation(self, _input: np.array):
-        self._input = np.array(_input)
-        _n = self._weights @ self._input
+        self._input = np.array(_input).reshape((1, -1))
+        _n = self._input @ self._weights
 
         self._neurons[:-1], self._derivative = self._function(_n)
         if self._next is not None:
@@ -40,16 +40,14 @@ class FullConnectedLayer:
 
     def back_propagation(self, delta):
         if self._next is not None:
-            _delta = self._next.back_propagation(delta)
-            _delta = _delta.reshape((-1, 1))
+            _delta = self._derivative * self._next.back_propagation(delta)
         else:
-            _delta = delta.reshape((-1, 1))
+            _delta = self._derivative * delta.reshape((1, -1))
 
-        _del = self._weights * _delta
-        _del = _del.sum(axis=0)
+        _del = _delta @ self._weights.T
 
-        self._weights -= self._perceptron.a * self._input * _delta * self._derivative
-        return _del[:-1]
+        self._weights -= self._perceptron.a * self._input.T @ _delta
+        return _del[:, :-1]
 
     def save_to_file(self, name, zip_file):
         np.savez(name, self._weights)

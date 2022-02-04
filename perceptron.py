@@ -40,7 +40,7 @@ class Perceptron:
         self.init_weights()
 
     def init_weights(self):
-        self.layers[0].set_weights((self.layers[0].size, self.layers[0].size))
+        self.layers[0].set_weights((len(self.data[0]), self.layers[0].size))
 
     def start(self):
         if not self.layers:
@@ -75,6 +75,7 @@ class Perceptron:
         self.average_error[0] = (self.average_error[0] + error) / self.average_error[1]
 
     def test_loop(self):
+        correct_cnt = 0
         for iter, _data in enumerate(self.data):
             output = self.layers[0].activation(_data)[:-1]
             res = f"Input: {_data}\nOutput: {output}\n"
@@ -83,9 +84,11 @@ class Perceptron:
             delta = output - self.answers[iter]
             error = self._error_func(delta)
             print(error)
+            correct_cnt += int(output.argmax() == self.answers[iter].argmax())
             self.calculate_average_error(error)
 
-        print(f"Error: {self.average_error[0]}")
+        print(f"Error: {self.average_error[0]}\n"
+              f"Test-Acc: {correct_cnt / len(self.data)}")
 
     def save(self):
         if self.name is not None:
