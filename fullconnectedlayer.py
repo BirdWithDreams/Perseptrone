@@ -6,7 +6,7 @@ import numpy as np
 class FullConnectedLayer:
     def __init__(self, perceptron, size: tuple, activation_function):
         self._size = size
-        self._neurons = np.ones(self._size + 1)
+        self._neurons = np.ones((perceptron._batch_size, self._size + 1))
         self._derivative = np.ones(self._size)
         self._function = activation_function
 
@@ -20,7 +20,7 @@ class FullConnectedLayer:
                f"function - {self._function.__name__}"
 
     def set_weights(self, size):
-        self._weights = np.random.uniform(-1, 1, size)
+        self._weights = np.random.uniform(-1, 1, size)  # TODO: add range of random weights generation
 
         if self._next is not None:
             self._next.set_weights((self.size + 1, self._next.size))
@@ -29,10 +29,11 @@ class FullConnectedLayer:
         self._next = layer
 
     def activation(self, _input: np.array):
-        self._input = np.array(_input).reshape((1, -1))
+        self._input = np.array(_input)
         _n = self._input @ self._weights
 
-        self._neurons[:-1], self._derivative = self._function(_n)
+        self._neurons[:, :-1], self._derivative = self._function(_n)
+        # self._neurons = np.concatenate((self._neurons, np.ones((1, self._neurons.shape[0]))), axis=1)
         if self._next is not None:
             return self._next.activation(self._neurons)
         else:
@@ -42,7 +43,7 @@ class FullConnectedLayer:
         if self._next is not None:
             _delta = self._derivative * self._next.back_propagation(delta)
         else:
-            _delta = self._derivative * delta.reshape((1, -1))
+            _delta = self._derivative * delta
 
         _del = _delta @ self._weights.T
 

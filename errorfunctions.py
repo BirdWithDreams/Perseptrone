@@ -5,15 +5,15 @@ import numpy as np
 
 
 def MSE(delta):
-    return sum(delta ** 2) / delta.size
+    return np.sum(delta ** 2, axis=1) / delta.shape[1]
 
 
 def RootMSE(delta):
-    return math.sqrt(sum(delta ** 2) / delta.size)
+    return np.sqrt(MSE(delta))
 
 
 def arctan(delta):
-    return sum(np.arctan(delta) ** 2) / delta.size
+    return np.sum(np.arctan(delta) ** 2, axis=1) / delta.shape[1]
 
 
 class ErrorFunctions(enum.Enum):

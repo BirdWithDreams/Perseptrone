@@ -49,4 +49,4 @@ def LeakyReLU(x: np.array):
 
 def softmax(x: np.array):
     temp = np.exp(x)
-    return temp / temp.sum(), 1 / len(temp)
+    return temp / temp.sum(axis=1).reshape((-1, 1)), 1 / len(temp)

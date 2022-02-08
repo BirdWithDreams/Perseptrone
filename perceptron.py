@@ -3,13 +3,20 @@ import json
 import numpy as np
 
 import activationfunctions as af
-from fullconnectedlayer import FullConnectedLayer
 from errorfunctions import ErrorFunctions
+from fullconnectedlayer import FullConnectedLayer
+
 
 class Perceptron:
     actFunctions = af
 
-    def __init__(self, learning_speed: float = 1, quantity: int = 1, error_func=None, name: str = None):
+    def __init__(self,
+                 name: str = None,
+                 learning_speed: float = 1,
+                 quantity: int = 1,
+                 error_func=None,
+                 batch_size=1):
+
         self.layers = []
         self.average_error = [0, 0]
 
@@ -18,11 +25,18 @@ class Perceptron:
         self._name = name
         self._error_func = error_func
 
+        self._batch_size = batch_size
+        self._batch_start = None
+        self._batch_end = None
+
     def __repr__(self):
         return f"Perceptron '{self.name}' with layers: \n\t" + "\n\t".join(repr(layer) for layer in self.layers)
 
     def __str__(self):
         return f"Perceptron '{self.name}' with layers: \n\t" + "\n\t".join(str(layer) for layer in self.layers)
+
+    def __call__(self, data, *, start=0):
+        return self.layers[start].activation(data)
 
     def addLayer(self, size: tuple, activation_function):
         layer = FullConnectedLayer(self, size, activation_function)
@@ -53,14 +67,18 @@ class Perceptron:
 
     def main_loop(self):
         for i in range(self.quantity):
-            for iter, _data in enumerate(self.data):
-                self.learning(_data, self.answers[iter])
+            for iter in range(int(len(self.data) / self._batch_size)):
+                self._batch_start = iter * self._batch_size
+                self._batch_end = (iter + 1) * self._batch_size
+                data = self.data[self._batch_start:self._batch_end]
 
-            self.average_error = [0, 0]
+                self.learning(data, self.answers[self._batch_start:self._batch_end])
+
+                self.average_error = [0, 0]
 
     def learning(self, _input, output):
         res = self.layers[0].activation(_input)
-        delta = res[:-1] - output
+        delta = (res[:, :-1] - output) / self._batch_size
         self.layers[0].back_propagation(delta)
 
         try:
@@ -76,14 +94,14 @@ class Perceptron:
 
     def test_loop(self):
         correct_cnt = 0
-        for iter, _data in enumerate(self.data):
-            output = self.layers[0].activation(_data)[:-1]
-            res = f"Input: {_data}\nOutput: {output}\n"
+        for iter, _ in enumerate(self.data):
+            output = self.layers[0].activation(self.data[iter:iter+1])[:, :-1]
+            res = f"Input: {self.data[iter:iter+1]}\nOutput: {output}\n"
             # print(res)
 
-            delta = output - self.answers[iter]
+            delta = output - self.answers[iter:iter+1]
             error = self._error_func(delta)
-            print(error)
+            # print(error)
             correct_cnt += int(output.argmax() == self.answers[iter].argmax())
             self.calculate_average_error(error)
 
@@ -155,7 +173,6 @@ class Perceptron:
     @quantity.setter
     def quantity(self, value):
         self._quantity = value
-
 
 def copy(other):
     _args = (other.a, other.quantity, other._error_func, other.name)
