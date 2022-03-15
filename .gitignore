@@ -118,3 +118,4 @@ test weights.npz
 test.py
 test_perceptron.json
 tests.py
+mnist_train.csv

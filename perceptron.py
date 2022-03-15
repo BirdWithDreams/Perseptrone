@@ -74,6 +74,8 @@ class Perceptron:
 
                 self.learning(data, self.answers[self._batch_start:self._batch_end])
 
+                if iter % 100 == 0:
+                    print(f"{i}.{iter // 100}: {self.average_error[0] / self.average_error[1]}\n")
                 self.average_error = [0, 0]
 
     def learning(self, _input, output):
@@ -84,7 +86,7 @@ class Perceptron:
         try:
             error = np.sum(self._error_func(delta))
             self.calculate_average_error(error)
-            print(error)
+            # print(error)
         except Exception as e:
             print(e)
 
@@ -98,11 +100,11 @@ class Perceptron:
 
         correct_cnt = 0
         for iter, _ in enumerate(self.data):
-            output = self.layers[0].activation(self.data[iter:iter+1])[:, :-1]
-            res = f"Input: {self.data[iter:iter+1]}\nOutput: {output}\n"
+            output = self.layers[0].activation(self.data[iter:iter + 1])[:, :-1]
+            res = f"Input: {self.data[iter:iter + 1]}\nOutput: {output}\n"
             # print(res)
 
-            delta = output - self.answers[iter:iter+1]
+            delta = output - self.answers[iter:iter + 1]
             error = self._error_func(delta)
             # print(error)
             correct_cnt += int(output.argmax() == self.answers[iter].argmax())
@@ -176,6 +178,7 @@ class Perceptron:
     @quantity.setter
     def quantity(self, value):
         self._quantity = value
+
 
 def copy(other):
     _args = (other.a, other.quantity, other._error_func, other.name)
