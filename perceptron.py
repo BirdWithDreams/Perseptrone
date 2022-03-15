@@ -38,8 +38,8 @@ class Perceptron:
     def __call__(self, data, *, start=0):
         return self.layers[start].activation(data)
 
-    def addLayer(self, size: tuple, activation_function):
-        layer = FullConnectedLayer(self, size, activation_function)
+    def addLayer(self, size: tuple, activation_function, *, dropout_const=1, range_=(-0.1, 0.1)):
+        layer = FullConnectedLayer(self, size, activation_function, dropout_const=dropout_const, range_=range_)
         if self.layers:
             self.layers[-1].set_next(layer)
 
@@ -82,7 +82,7 @@ class Perceptron:
         self.layers[0].back_propagation(delta)
 
         try:
-            error = self._error_func(delta)
+            error = np.sum(self._error_func(delta))
             self.calculate_average_error(error)
             print(error)
         except Exception as e:
@@ -90,9 +90,12 @@ class Perceptron:
 
     def calculate_average_error(self, error):
         self.average_error[1] += 1
-        self.average_error[0] = (self.average_error[0] + error) / self.average_error[1]
+        self.average_error[0] = self.average_error[0] + error
 
     def test_loop(self):
+        for layer in self.layers:
+            layer._dropout_const = 1
+
         correct_cnt = 0
         for iter, _ in enumerate(self.data):
             output = self.layers[0].activation(self.data[iter:iter+1])[:, :-1]
